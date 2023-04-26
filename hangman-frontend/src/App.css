@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+.hangman {
+  background-color: bisque;
+  padding: 3%;
+  margin: 2%;
+}
+
+.alphabet {
+  margin-top: 10%
+}

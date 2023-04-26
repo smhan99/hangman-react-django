@@ -1,0 +1,6 @@
+<form method="POST">
+    {% csrf_token %}
+    <button>start game</button>
+</form>
+<br><br><br>
+<a href="{% url 'logout_view' %}"><button>Logout</button></a>

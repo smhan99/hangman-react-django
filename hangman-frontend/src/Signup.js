@@ -2,12 +2,15 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export const Login = () => {
+export const Signup = () => {
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    navigate("/login");
     console.log({
       email: data.get("username"),
       password: data.get("password"),
@@ -15,7 +18,7 @@ export const Login = () => {
   };
   return (
     <Container component="main" maxWidth="xs">
-      <h2>Log In</h2>
+      <h2>Sign Up</h2>
       <Box
         sx={{
           marginTop: 8,
@@ -50,11 +53,9 @@ export const Login = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Log In
+            Create User
           </Button>
         </Box>
-        <p>Need to Sign Up as a New User?</p>
-        <Link to={"/signup"}>Create Account</Link>
       </Box>
     </Container>
   );

@@ -3,17 +3,17 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 
-// import hangman0 from "./static/hangman/0.png";
-// import hangman1 from "./static/hangman/1.png";
-// import hangman2 from "./static/hangman/2.png";
-// import hangman3 from "./static/hangman/3.png";
-// import hangman4 from "./static/hangman/4.png";
-// import hangman5 from "./static/hangman/5.png";
-// import hangman6 from "./static/hangman/6.png";
-// import hangman7 from "./static/hangman/7.png";
-// import hangman8 from "./static/hangman/8.png";
-// import hangman9 from "./static/hangman/9.png";
-// import hangman10 from "./static/hangman/10.png";
+import hangman0 from "./static/hangman/0.png";
+import hangman1 from "./static/hangman/1.png";
+import hangman2 from "./static/hangman/2.png";
+import hangman3 from "./static/hangman/3.png";
+import hangman4 from "./static/hangman/4.png";
+import hangman5 from "./static/hangman/5.png";
+import hangman6 from "./static/hangman/6.png";
+import hangman7 from "./static/hangman/7.png";
+import hangman8 from "./static/hangman/8.png";
+import hangman9 from "./static/hangman/9.png";
+import hangman10 from "./static/hangman/10.png";
 
 
 export const Game = () => {
@@ -29,6 +29,8 @@ export const Game = () => {
   const alpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
                  'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
                  'u', 'v', 'w', 'x', 'y', 'z'];
+  const hangmanStates = [hangman0, hangman1, hangman2, hangman3, hangman4, hangman5,
+                         hangman6, hangman7, hangman8, hangman9, hangman10];
 
   const handleAlphabetClick = (a, i) => {
     let newAlphabet = [...alphabet];
@@ -87,13 +89,8 @@ export const Game = () => {
 
   return (
     <div className='hangman'>
-      {user ? (game) : (<Login gid={}/>)}
-      <h1>HI</h1>
-
-      {/* <img src={"/static/hangman/" + hangman + ".png"} /> */}
-
-      <h1>Hangman Counts left: {10 - hangman}</h1>
-
+      {/* {user ? (game) : (<Login gid={}/>)} */}
+      <img src={hangmanStates[hangman]} height={"25%"} width={"25%"}/>
       <Grid className='word' container justifyContent="center">
         {wordList.map((a,i) => (
           <Paper sx={{height: 100, width: 60}}

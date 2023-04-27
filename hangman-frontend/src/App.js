@@ -3,6 +3,8 @@ import "./App.css";
 import { Game } from "./Game";
 import { Login } from "./Login";
 import { Signup } from "./Signup";
+import { HomePage } from "./HomePage";
+
 //might be useful to have a <NavBar />
 function App() {
   return (

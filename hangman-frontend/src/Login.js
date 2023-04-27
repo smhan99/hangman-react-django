@@ -2,16 +2,24 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Login = () => {
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    // set username to local storage
+    localStorage.setItem("user", data.get("username"));
+
+    // make call to user API with this object
     console.log({
       email: data.get("username"),
       password: data.get("password"),
     });
+
+    navigate("/homepage");
   };
   return (
     <Container component="main" maxWidth="xs">

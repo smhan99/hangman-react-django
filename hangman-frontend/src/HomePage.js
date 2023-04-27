@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Leaderboard from "./Leaderboard";
+import { Leaderboard } from "./Leaderboard";
 import { Login } from "./Login";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";

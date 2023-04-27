@@ -23,6 +23,7 @@ export const Game = () => {
   const [alphabet, setAlphabet] = useState(new Array(26).fill(false)); //alphabet used/unused
   const [hangman, setHangman] = useState(0); // hangman state
   const [correct, setCorrect] = useState(0);
+  const [gameover, setGameover] = useState(false);
 
   const [user, setUser] = useState({});
   // if we want, we can have difficulty state as well
@@ -54,25 +55,40 @@ export const Game = () => {
     "y",
     "z",
   ];
-  const hangmanStates = [hangman0, hangman1, hangman2, hangman3, hangman4, hangman5,
-                         hangman6, hangman7, hangman8, hangman9, hangman10];
+
+  const hangmanStates = [
+    hangman0, 
+    hangman1, 
+    hangman2, 
+    hangman3, 
+    hangman4, 
+    hangman5,
+    hangman6, 
+    hangman7, 
+    hangman8,
+    hangman9, 
+    hangman10
+  ];
 
   const handleAlphabetClick = (a, i) => {
-    let newAlphabet = [...alphabet];
-    newAlphabet[i] = true;
-    setAlphabet(newAlphabet);
+    if (!gameover) {
+      let newAlphabet = [...alphabet];
+      newAlphabet[i] = true;
+      setAlphabet(newAlphabet);
 
-    let indices = wordDict[a];
-    if (indices) {
-      let newWordBool = [...wordBool];
-      indices.map((i) => (newWordBool[i] = true));
-      setCorrect(correct + indices.length);
-      setWordBool(newWordBool);
-    } else setHangman(hangman + 1);
+      let indices = wordDict[a];
+      if (indices) {
+        let newWordBool = [...wordBool];
+        indices.map((i) => (newWordBool[i] = true));
+        setCorrect(correct + indices.length);
+        setWordBool(newWordBool);
+      } else setHangman(hangman + 1);
+    }
   };
 
   useEffect(() => {
     if (hangman === 10) {
+      setGameover(true);
       setTimeout(() => {
         alert("YOU LOSE!");
       }, 300);
@@ -82,6 +98,7 @@ export const Game = () => {
 
   useEffect(() => {
     if (correct !== 0 && correct === wordList.length) {
+      setGameover(true);
       setTimeout(() => {
         alert("YOU WIN!");
       }, 300);
@@ -113,7 +130,7 @@ export const Game = () => {
   return (
     <div className='hangman'>
       {/* {user ? (game) : (<Login gid={}/>)} */}
-      <img src={hangmanStates[hangman]} height={"25%"} width={"25%"}/>
+      <img src={hangmanStates[hangman]} height={"25%"} width={"25%"} alt=""/>
       <Grid className='word' container justifyContent="center">
         {wordList.map((a,i) => (
           <Paper sx={{height: 100, width: 60}}

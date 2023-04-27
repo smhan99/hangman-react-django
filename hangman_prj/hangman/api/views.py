@@ -61,12 +61,3 @@ def user_guess(request, game_id):
             'is_winner': game.is_winner
         }
         return Response(data)
-
-
-
-@api_view(['GET'])
-def leaderboard(request):
-    top_users = Leaderboard.objects.order_by('-win_count')[:10]
-    serializer = LeaderboardSerializer(top_users, many=True)
-    return Response(serializer.data)
-

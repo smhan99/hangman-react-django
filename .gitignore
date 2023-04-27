@@ -6,4 +6,6 @@ virt/
 __pycache__
 .idea/workspace.xml
 hangman_prj/db.sqlite3
-.hangman_prj/**/migrations/
+.idea/hangman-react-django.iml
+hangman_prj/**/migrations/
+.idea

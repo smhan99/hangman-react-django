@@ -1,18 +1,17 @@
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from hangman.models import Game, Leaderboard
 from hangman.utils import create_game
-from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
 import uuid
+from rest_framework.response import Response
 
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
-@permission_classes([IsAuthenticated])
 def new_game(request):
     """
     Takes input as word and returns game ID.
@@ -26,7 +25,10 @@ def new_game(request):
 
     Success case:
     {
-        "game_id": <UUID of the game created>
+        "response":
+        {
+            "game_id": <UUID of the game created>
+        }
     }
 
     Error case:
@@ -40,15 +42,14 @@ def new_game(request):
     try:
         word = str.upper(request.data['word'])
     except KeyError:
-        return JsonResponse({'error': 'Missing word in the request data'})
+        return Response({'error': 'Missing word in the request data'})
 
     created_game = create_game(request.user, word)
-    return JsonResponse({'game_id': created_game.game_id}, safe=False)
+    return Response({'response': {'game_id': created_game.game_id}})
 
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
-@permission_classes([IsAuthenticated])
 def get_game_details(request):
     """
     Takes input as Game ID returns game details.
@@ -62,10 +63,13 @@ def get_game_details(request):
 
     Success case:
     {
-        'game_id': <UUID of the game>
-        'word': <Word of the game>
-        'owner': <Username of the owner of the game>
-        'is_over': True if game is done else False
+        "response" :
+        {
+            'game_id': <UUID of the game>
+            'word': <Word of the game>
+            'owner': <Username of the owner of the game>
+            'is_over': True if game is done else False
+        }
     }
 
     Error case:
@@ -79,14 +83,14 @@ def get_game_details(request):
     try:
         game_id = request.data['game_id']
     except KeyError:
-        return JsonResponse({'error': 'Missing game_id in the request data'})
+        return Response({'error': 'Missing game_id in the request data'})
 
     try:
         game = Game.objects.get(game_id=uuid.UUID(game_id))
     except ObjectDoesNotExist:
-        return JsonResponse({'error': 'Invalid Game ID'})
+        return Response({'error': 'Invalid Game ID'})
     except ValidationError:
-        return JsonResponse({'error': 'Invalid Game ID'})
+        return Response({'error': 'Invalid Game ID'})
 
     game_obj = {
         'game_id': game.game_id,
@@ -97,12 +101,11 @@ def get_game_details(request):
         'is_over': game.is_over
     }
 
-    return JsonResponse(game_obj)
+    return Response({'response': game_obj})
 
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
-@permission_classes([IsAuthenticated])
 def submit_game(request):
     """
     Takes finished game details and updates the game
@@ -117,7 +120,7 @@ def submit_game(request):
 
     Success case:
     {
-        "result": "Game updated successfully"
+        "response": "Game updated successfully"
     }
 
     Error case:
@@ -132,17 +135,17 @@ def submit_game(request):
         game_id = request.data['game_id']
         is_won = request.data['is_won']
     except KeyError as missing_key:
-        return JsonResponse({'error': 'Missing key: ' + str(missing_key) + ' in the request'})
+        return Response({'error': 'Missing key: ' + str(missing_key) + ' in the request'})
 
     try:
         current_game = Game.objects.get(game_id=uuid.UUID(game_id))
     except ObjectDoesNotExist:
-        return JsonResponse({'error': 'Invalid game ID'})
+        return Response({'error': 'Invalid game ID'})
     except ValueError:
-        return JsonResponse({'error': 'Invalid game ID'})
+        return Response({'error': 'Invalid game ID'})
 
     if current_game.is_over:
-        return JsonResponse({'error': 'Game has already been submitted'})
+        return Response({'error': 'Game has already been submitted'})
 
     current_game.played_by = request.user
     current_game.is_over = True
@@ -150,7 +153,7 @@ def submit_game(request):
     current_game.save()
 
     if not is_won:
-        return JsonResponse({'result': 'Game updated successfully'})
+        return Response({'response': 'Game updated successfully'})
 
     try:
         leaderboard_record = Leaderboard.objects.get(user=request.user)
@@ -161,7 +164,7 @@ def submit_game(request):
     leaderboard_record.win_count += 1
     leaderboard_record.save()
 
-    return JsonResponse({'result': 'Game updated successfully'})
+    return Response({'response': 'Game updated successfully'})
 
 
 @api_view(['POST'])
@@ -179,8 +182,12 @@ def validate_credentials(request):
 
     Success case:
     {
-        "validated": <True if credentials are valid else False
+        "response":
+        {
+            "validated": <True if credentials are valid else False
+        }
     }
+
 
     Error case:
     {
@@ -194,10 +201,10 @@ def validate_credentials(request):
         username = request.data['username']
         password = request.data['password']
     except KeyError as missing_key:
-        return JsonResponse({'error': 'Missing key: ' + str(missing_key) + ' in the request'})
+        return Response({'error': 'Missing key: ' + str(missing_key) + ' in the request'})
 
     user = authenticate(request, username=username, password=password)
-    return JsonResponse({'validated': user is not None})
+    return Response({'validated': user is not None})
 
 
 @api_view(['GET'])
@@ -210,7 +217,7 @@ def get_leaderboard(_):
 
     Success case:
     {
-        "result": [
+        "response": [
             {
                 "username": <username of the player>
                 "win_count": #of games won by the player
@@ -237,20 +244,47 @@ def get_leaderboard(_):
             }
         )
 
-    return JsonResponse({'leaderboard': result})
+    return Response({'leaderboard': result})
 
 
 @api_view(['POST'])
 def register_user(request):
+    """
+    Registers the user with the given username and password
+
+    Input JSON:
+    {
+        "username": <username of the user to be created>
+        "password": <password of the user to be created>
+    }
+
+
+    Output JSON:
+
+    Success case:
+    {
+        "response": "User successfully created"
+    }
+
+    Error case:
+    {
+        "error": <Error Message>
+    }
+
+    Request Type: POST
+    Authentication Required: No
+    """
     try:
         username = request.data['username']
         password = request.data['password']
     except KeyError as missing_key:
-        return JsonResponse({'error': 'Missing key: ' + str(missing_key) + ' in the request'})
+        return Response({'error': 'Missing key: ' + str(missing_key) + ' in the request'})
 
     try:
         user = User.objects.create_user(username=username, password=password)
         user.save()
-        return JsonResponse({'response': 'User successfully created'})
+        return Response({'response': 'User successfully created'})
+    except IntegrityError as error:
+        return Response({'error': 'Username already exists'})
     except BaseException as message:
-        return JsonResponse({'error': message})
+        return Response({'error': str(message)})

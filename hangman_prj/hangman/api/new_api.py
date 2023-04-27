@@ -204,7 +204,7 @@ def validate_credentials(request):
         return Response({'error': 'Missing key: ' + str(missing_key) + ' in the request'})
 
     user = authenticate(request, username=username, password=password)
-    return Response({'validated': user is not None})
+    return Response({'response':  {'validated': user is not None}})
 
 
 @api_view(['GET'])

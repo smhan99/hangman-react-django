@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
+import React, { useEffect, useState } from "react";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
 
 import hangman0 from "./static/hangman/0.png";
 import hangman1 from "./static/hangman/1.png";
@@ -18,7 +18,7 @@ import hangman10 from "./static/hangman/10.png";
 
 export const Game = () => {
   const [wordDict, setWordDict] = useState({}); // {letter: [position]}
-  const [wordList, setWordList] = useState([]); // [letter] of word 
+  const [wordList, setWordList] = useState([]); // [letter] of word
   const [wordBool, setWordBool] = useState([]); // [bool] open/close
   const [alphabet, setAlphabet] = useState(new Array(26).fill(false)); //alphabet used/unused
   const [hangman, setHangman] = useState(0); // hangman state
@@ -26,9 +26,34 @@ export const Game = () => {
 
   const [user, setUser] = useState({});
   // if we want, we can have difficulty state as well
-  const alpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-                 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-                 'u', 'v', 'w', 'x', 'y', 'z'];
+  const alpha = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ];
   const hangmanStates = [hangman0, hangman1, hangman2, hangman3, hangman4, hangman5,
                          hangman6, hangman7, hangman8, hangman9, hangman10];
 
@@ -40,11 +65,11 @@ export const Game = () => {
     let indices = wordDict[a];
     if (indices) {
       let newWordBool = [...wordBool];
-      indices.map((i) => newWordBool[i] = true);
+      indices.map((i) => (newWordBool[i] = true));
       setCorrect(correct + indices.length);
       setWordBool(newWordBool);
-    } else setHangman(hangman+1);
-  }
+    } else setHangman(hangman + 1);
+  };
 
   useEffect(() => {
     if (hangman === 10) {
@@ -53,7 +78,7 @@ export const Game = () => {
       }, 300);
     }
     // send back lose
-  }, [hangman])
+  }, [hangman]);
 
   useEffect(() => {
     if (correct !== 0 && correct === wordList.length) {
@@ -63,29 +88,27 @@ export const Game = () => {
     }
     // send back win
     // eslint-disable-next-line
-  }, [correct])
+  }, [correct]);
 
-  useEffect(()=> {
-
-  }, [user])
+  useEffect(() => {}, [user]);
 
   useEffect(() => {
     const getDict = (wd) => {
       let dict = {};
       for (let i = 0; i < wd.length; i++) {
         let c = wd.at(i);
-        if (dict[c]) dict[c].push(i); 
+        if (dict[c]) dict[c].push(i);
         else dict[c] = [i];
       }
       return dict;
-    }
+    };
     // fetch API to populate everything
     //dummy word: caterpillar
     let word = "caterpillar";
     setWordList(word.split(""));
     setWordDict(getDict(word));
     setWordBool(new Array(word.length).fill(false));
-  }, [])
+  }, []);
 
   return (
     <div className='hangman'>
@@ -101,17 +124,16 @@ export const Game = () => {
         ))}
       </Grid>
 
-
-
-      <Grid className='alphabet' container justifyContent="center">
+      <Grid className="alphabet" container justifyContent="center">
         <Grid item xs={10}>
           <Grid container justifyContent="center" spacing={2}>
             {alpha.map((a, i) => (
               <Grid key={i} item xs={1}>
-                <Button sx={{height: 60, width: 60}}
-                        variant="contained" 
-                        disabled={alphabet[i]}
-                        onClick={() => handleAlphabetClick(a, i)}
+                <Button
+                  sx={{ height: 60, width: 60 }}
+                  variant="contained"
+                  disabled={alphabet[i]}
+                  onClick={() => handleAlphabetClick(a, i)}
                 >
                   <h1>{a}</h1>
                 </Button>
@@ -121,5 +143,5 @@ export const Game = () => {
         </Grid>
       </Grid>
     </div>
-  )
-}
+  );
+};

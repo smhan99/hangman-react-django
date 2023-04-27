@@ -1,13 +1,10 @@
 from django.shortcuts import render, redirect
 from .models import Game
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import GameForm, LoginForm
 from .words import words
 from .utils import get_word
-from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
-
 
 
 # Create your views here.
@@ -52,9 +49,8 @@ def home(request):
         if request.method == 'POST':
             word = get_word(words)
             game = Game.objects.create(word=word, user=user)
-            return render (request, 'game.html', {'game':game})
+            return render(request, 'game.html', {'game': game})
         else:
-            return render(request,'home.html')
+            return render(request, 'home.html')
     else:
         return redirect('login_view')
-

@@ -31,7 +31,7 @@ export const Game = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   // eslint-disable-next-line
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   // if we want, we can have difficulty state as well
   const alpha = [
     "A",
@@ -92,24 +92,59 @@ export const Game = () => {
     }
   };
 
+  const getDict = (wd) => {
+    let dict = {};
+    for (let i = 0; i < wd.length; i++) {
+      let c = wd.at(i);
+      if (dict[c]) dict[c].push(i);
+      else dict[c] = [i];
+    }
+    return dict;
+  };
+
+  const getGame = () => {
+    fetch("https://abhijithibukun.pythonanywhere.com/api/gameDetails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Basic ${btoa(user.username + ":" + user.password)}`,
+      },
+      body: JSON.stringify({
+        game_id: id,
+      }),
+    })
+    .then((resp) => resp.json())
+    .then((resp) => {
+      console.log(resp);
+      if (resp.response) {
+        let word = resp.response.word.toUpperCase();
+        setWordList(word.split(""));
+        setWordDict(getDict(word));
+        setWordBool(new Array(word.length).fill(false));
+      } else {
+        alert("Oops. URL Expired!");
+      }
+    });
+  }
+
   const submitGame = (won) => {
     fetch("https://abhijithibukun.pythonanywhere.com/api/submitGame", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${btoa(user.username + ":" + user.password)}`,
+        'Authorization': `Basic ${btoa(user.username + ":" + user.password)}`,
       },
       body: JSON.stringify({
         game_id: id,
         is_won: won,
       }),
     })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        // console.log(resp);
-        if (resp.error) alert("Oops. Something went wrong.");
-        else navigate("/hangman-react-django/");
-      });
+    .then((resp) => resp.json())
+    .then((resp) => {
+      // console.log(resp);
+      if (resp.error) alert("Oops. Something went wrong.");
+      else navigate("/hangman-react-django/");
+    });
   };
 
   useEffect(() => {
@@ -135,44 +170,15 @@ export const Game = () => {
   }, [correct]);
 
   useEffect(() => {
-    const getDict = (wd) => {
-      let dict = {};
-      for (let i = 0; i < wd.length; i++) {
-        let c = wd.at(i);
-        if (dict[c]) dict[c].push(i);
-        else dict[c] = [i];
-      }
-      return dict;
-    };
-    fetch("https://abhijithibukun.pythonanywhere.com/api/gameDetails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        game_id: id,
-      }),
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        console.log(resp);
-        if (resp.response) {
-          let word = resp.response.word.toUpperCase();
-          setWordList(word.split(""));
-          setWordDict(getDict(word));
-          setWordBool(new Array(word.length).fill(false));
-        } else {
-          alert("Oops. URL Expired!");
-        }
-      });
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
     if (state) setUser(state);
     else setUser(JSON.parse(localStorage.getItem("user")));
     // eslint-disable-next-line
   }, [state]);
+
+  useEffect(() => {
+    if (user) getGame();
+    // eslint-disable-next-line
+  }, [user])
 
   return (
     <div>
@@ -182,7 +188,7 @@ export const Game = () => {
             It seems like you are not logged in. Please log in first to access
             the game!
           </p>
-          <Login gameid={id} />
+          <Login gameId={id} />
         </div>
       ) : (
         <div className="hangman">

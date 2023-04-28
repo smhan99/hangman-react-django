@@ -10,29 +10,23 @@ export const Login = ({ gameId }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const verifyUser = async (username, password) => {
+  const verifyUser = async () => {
     const url = "https://abhijithibukun.pythonanywhere.com/api/validateCreds";
 
     let response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${btoa(username + ":" + password)}`,
       },
       body: JSON.stringify({
         username: username,
         password: password,
       }),
     }).then((response) => response.json());
-    if (response.response.validated && !gameId) {
-      navigate("/hangman-react-django/", {
-        state: {
-          username: username,
-          password: password,
-        },
-      });
-    } else if (response.response.validated && gameId) {
-      navigate("/hangman-react-django/game/" + gameId, {
+
+    console.log(gameId);
+    if (response.response.validated) {
+      navigate("/hangman-react-django/" + (gameId ? ("game/" + gameId) : ("")), {
         state: {
           username: username,
           password: password,
@@ -45,9 +39,9 @@ export const Login = ({ gameId }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    let username = data.get("username");
-    let password = data.get("password");
+    // const data = new FormData(e.currentTarget);
+    // let username = data.get("username");
+    // let password = data.get("password");
     // set username to local storage
     localStorage.setItem(
       "user",
@@ -57,7 +51,7 @@ export const Login = ({ gameId }) => {
       })
     );
 
-    verifyUser(username, password);
+    verifyUser();
   };
 
   return (

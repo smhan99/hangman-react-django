@@ -91,7 +91,7 @@ export const HomePage = () => {
             >
               <h3>Play Against a Friend?</h3>
               {hasLink && (
-                <p>Game created at: https://localhost:3000/game/{link}</p>
+                <p>Game created at: https://smhan99.github.io/hangman-react-django/game/{link}</p>
               )}
               <TextField
                 margin="normal"

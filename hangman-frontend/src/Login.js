@@ -26,7 +26,7 @@ export const Login = ({ gameId }) => {
 
     console.log(gameId);
     if (response.response.validated) {
-      navigate("/hangman-react-django/" + (gameId ? ("game/" + gameId) : ("")), {
+      navigate("/hangman-react-django/" + (gameId ? ("game/?id=" + gameId) : ("")), {
         state: {
           username: username,
           password: password,

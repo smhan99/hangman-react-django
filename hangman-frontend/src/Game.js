@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom"; //useParams
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -27,7 +27,9 @@ export const Game = () => {
   const [correct, setCorrect] = useState(0);
   const [gameover, setGameover] = useState(false);
 
-  const { id } = useParams();
+  // const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get('id');
   const { state } = useLocation();
   const navigate = useNavigate();
   // eslint-disable-next-line

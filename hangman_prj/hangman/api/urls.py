@@ -11,6 +11,7 @@ urlpatterns = [
     path('gameDetails', new_api.get_game_details, name='get_game_details'),
     path('submitGame', new_api.submit_game, name='submit_game'),
     path('leaderboard', new_api.get_leaderboard, name='get_leaderboard'),
+    path('getUserScore', new_api.get_user_score, name='get_user_score'),
 
     # Auth API
     path('validateCreds', new_api.validate_credentials, name='validate_creds'),

@@ -204,7 +204,7 @@ def validate_credentials(request):
         return Response({'error': 'Missing key: ' + str(missing_key) + ' in the request'})
 
     user = authenticate(request, username=username, password=password)
-    return Response({'response':  {'validated': user is not None}})
+    return Response({'response': {'validated': user is not None}})
 
 
 @api_view(['GET'])
@@ -244,7 +244,7 @@ def get_leaderboard(_):
             }
         )
 
-    return Response({'leaderboard': result})
+    return Response({'response': {'leaderboard': result}})
 
 
 @api_view(['POST'])
@@ -288,3 +288,13 @@ def register_user(request):
         return Response({'error': 'Username already exists'})
     except BaseException as message:
         return Response({'error': str(message)})
+
+
+@api_view(['GET'])
+@authentication_classes([BasicAuthentication])
+def get_user_score(request):
+    try:
+        user_record = Leaderboard.objects.get(user=request.user)
+        return Response({'response': {'win_count': user_record.win_count}})
+    except ObjectDoesNotExist:
+        return Response({'response': {'win_count': 0}})

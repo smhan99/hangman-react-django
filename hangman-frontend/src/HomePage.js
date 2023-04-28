@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Leaderboard } from "./Leaderboard";
 import { Login } from "./Login";
 import Button from "@mui/material/Button";
@@ -91,7 +91,10 @@ export const HomePage = () => {
             >
               <h3>Play Against a Friend?</h3>
               {hasLink && (
-                <p>Game created at: https://smhan99.github.io/hangman-react-django/game/{link}</p>
+                <div>
+                  <p>Game created at: <Link to={`/hangman-react-django/game/${link}`}>This Link</Link></p>
+                  <p>Right click and 'Copy Link Address' to share your game!</p>
+                </div>
               )}
               <TextField
                 margin="normal"

@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import hangman from "./static/240px-Hangman.png";
 
 export const Login = ({ gameId }) => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export const Login = ({ gameId }) => {
 
     console.log(gameId);
     if (response.response.validated) {
-      navigate("/hangman-react-django/" + (gameId ? ("game/" + gameId) : ("")), {
+      navigate("/hangman-react-django/" + (gameId ? "game/" + gameId : ""), {
         state: {
           username: username,
           password: password,
@@ -39,10 +40,7 @@ export const Login = ({ gameId }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const data = new FormData(e.currentTarget);
-    // let username = data.get("username");
-    // let password = data.get("password");
-    // set username to local storage
+
     localStorage.setItem(
       "user",
       JSON.stringify({
@@ -57,6 +55,7 @@ export const Login = ({ gameId }) => {
   return (
     <Container component="main" maxWidth="xs">
       <h2>Want to Play Hangman? Log in below.</h2>
+      <img src={hangman} className="logo" alt="hangman clip art" />
       <Box
         sx={{
           marginTop: 8,
@@ -91,7 +90,7 @@ export const Login = ({ gameId }) => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 1, mb: 2 }}
           >
             Log In
           </Button>

@@ -63,17 +63,17 @@ export const Game = () => {
   ];
 
   const hangmanStates = [
-    hangman0, 
-    hangman1, 
-    hangman2, 
-    hangman3, 
-    hangman4, 
+    hangman0,
+    hangman1,
+    hangman2,
+    hangman3,
+    hangman4,
     hangman5,
-    hangman6, 
-    hangman7, 
+    hangman6,
+    hangman7,
     hangman8,
-    hangman9, 
-    hangman10
+    hangman9,
+    hangman10,
   ];
 
   const handleAlphabetClick = (a, i) => {
@@ -94,23 +94,23 @@ export const Game = () => {
 
   const submitGame = (won) => {
     fetch("https://abhijithibukun.pythonanywhere.com/api/submitGame", {
-      'method': 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(user.username+":"+user.password)}`
+        "Content-Type": "application/json",
+        Authorization: `Basic ${btoa(user.username + ":" + user.password)}`,
       },
       body: JSON.stringify({
-        'game_id': id,
-        'is_won': won,
-      })
+        game_id: id,
+        is_won: won,
+      }),
     })
-    .then(resp => resp.json())
-    .then(resp => {
-      // console.log(resp);
-      if (resp.error) alert("Oops. Something went wrong.");
-      else navigate("/hangman-react-django/");
-    });
-  }
+      .then((resp) => resp.json())
+      .then((resp) => {
+        // console.log(resp);
+        if (resp.error) alert("Oops. Something went wrong.");
+        else navigate("/hangman-react-django/");
+      });
+  };
 
   useEffect(() => {
     if (hangman === 10) {
@@ -145,27 +145,26 @@ export const Game = () => {
       return dict;
     };
     fetch("https://abhijithibukun.pythonanywhere.com/api/gameDetails", {
-      'method': 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(user.username+":"+user.password)}`
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        'game_id': id,
-      })
+        game_id: id,
+      }),
     })
-    .then(resp => resp.json())
-    .then(resp => {
-      console.log(resp);
-      if (resp.response) {
-        let word = resp.response.word.toUpperCase();
-        setWordList(word.split(""));
-        setWordDict(getDict(word));
-        setWordBool(new Array(word.length).fill(false));
-      } else {
-        alert("Oops. URL Expired!")
-      }
-    })
+      .then((resp) => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        if (resp.response) {
+          let word = resp.response.word.toUpperCase();
+          setWordList(word.split(""));
+          setWordDict(getDict(word));
+          setWordBool(new Array(word.length).fill(false));
+        } else {
+          alert("Oops. URL Expired!");
+        }
+      });
     // eslint-disable-next-line
   }, []);
 
@@ -173,23 +172,29 @@ export const Game = () => {
     if (state) setUser(state);
     else setUser(JSON.parse(localStorage.getItem("user")));
     // eslint-disable-next-line
-  }, [state])
+  }, [state]);
 
   return (
     <div>
       {!user ? (
         <div>
-          <p>It seems like you are not logged in. Please log in first to access the game!</p>
-          <Login gameid={id}/>
+          <p>
+            It seems like you are not logged in. Please log in first to access
+            the game!
+          </p>
+          <Login gameid={id} />
         </div>
       ) : (
-        <div className='hangman'>
-          <img src={hangmanStates[hangman]} height={"25%"} width={"25%"} alt=""/>
-          <Grid className='word' container justifyContent="center">
-            {wordList.map((a,i) => (
-              <Paper sx={{height: 100, width: 60}}
-                    key={i}
-              >
+        <div className="hangman">
+          <img
+            src={hangmanStates[hangman]}
+            height={"25%"}
+            width={"25%"}
+            alt=""
+          />
+          <Grid className="word" container justifyContent="center">
+            {wordList.map((a, i) => (
+              <Paper sx={{ height: 100, width: 60 }} key={i}>
                 {wordBool[i] && <h1>{a}</h1>}
               </Paper>
             ))}

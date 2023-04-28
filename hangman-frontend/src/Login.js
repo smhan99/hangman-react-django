@@ -13,13 +13,12 @@ export const Login = ({ gameId }) => {
   const verifyUser = async (username, password) => {
     const url = "https://abhijithibukun.pythonanywhere.com/api/validateCreds";
 
-    let headers = new Headers();
-
-    headers.append("Content-Type", "application/json");
-
     let response = await fetch(url, {
       method: "POST",
-      headers: headers,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${btoa(username + ":" + password)}`,
+      },
       body: JSON.stringify({
         username: username,
         password: password,

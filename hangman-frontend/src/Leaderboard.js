@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,20 +8,15 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 export const Leaderboard = () => {
-  const [info, setInfo] = useState([
-    {username: "username1", score: 45},
-    {username: "username2", score: 33},
-    {username: "username3", score: 22},
-    {username: "username4", score: 21},
-    {username: "username5", score: 14},
-    {username: "username6", score: 11},
-    {username: "username7", score: 6},
-    {username: "username8", score: 6},
-    {username: "username9", score: 5},
-    {username: "username10", score: 1},
-  ])
+  const [info, setInfo] = useState([])
 
-  //useEffect to populate info
+  useEffect(() => {
+    fetch("https://abhijithibukun.pythonanywhere.com/api/leaderboard", {
+      'method': 'GET',
+    })
+    .then(resp => resp.json())
+    .then(resp => setInfo(resp.leaderboard));
+  }, [])
 
   return (
     <div>
@@ -42,7 +37,7 @@ export const Leaderboard = () => {
                 <TableCell component="th" scope="row">
                   {row.username}
                 </TableCell>
-                <TableCell align="right">{row.score}</TableCell>
+                <TableCell align="right">{row.win_count}</TableCell>
               </TableRow>
             ))}
           </TableBody>

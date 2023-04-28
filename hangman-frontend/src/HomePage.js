@@ -8,14 +8,34 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 
 export const HomePage = () => {
-  const [user, setUser] = useState(localStorage.getItem("user"));
+  // eslint-disable-next-line
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 
   const navigate = useNavigate();
 
+  const getNewGame = (word) => {
+    fetch("https://abhijithibukun.pythonanywhere.com/api/newGame", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa(user.username+':'+user.password),
+      },
+      body: JSON.stringify({
+        'word': word,
+      })
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      console.log(resp);
+      if (resp.error) alert("Oops. Something went wrong. Try again!");
+      if (word === "") navigate("/game/" + resp.response.game_id);
+      else console.log("CREATE LINK");
+    })
+  } 
+
   const handleNewGame = (e) => {
     e.preventDefault();
-    console.log("clicked new game button");
-    navigate("/game");
+    getNewGame("");
   };
 
   const handleShareGame = (e) => {

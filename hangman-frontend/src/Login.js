@@ -4,14 +4,17 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Link, useNavigate } from "react-router-dom";
 
-export const Login = () => {
+export const Login = ({gameid}) => {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     // set username to local storage
-    localStorage.setItem("user", data.get("username"));
+    localStorage.setItem("user", JSON.stringify({
+      username: data.get("username"),
+      password: data.get("password")
+    }));
 
     // make call to user API with this object
     console.log({

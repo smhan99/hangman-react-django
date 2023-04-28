@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -15,6 +16,7 @@ import hangman8 from "./static/hangman/8.png";
 import hangman9 from "./static/hangman/9.png";
 import hangman10 from "./static/hangman/10.png";
 
+import { Login } from "./Login";
 
 export const Game = () => {
   const [wordDict, setWordDict] = useState({}); // {letter: [position]}
@@ -25,35 +27,38 @@ export const Game = () => {
   const [correct, setCorrect] = useState(0);
   const [gameover, setGameover] = useState(false);
 
-  const [user, setUser] = useState({});
+  const { id } = useParams();
+  const navigate = useNavigate();
+  // eslint-disable-next-line
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   // if we want, we can have difficulty state as well
   const alpha = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
   ];
 
   const hangmanStates = [
@@ -86,14 +91,35 @@ export const Game = () => {
     }
   };
 
+  const submitGame = (won) => {
+    fetch("https://abhijithibukun.pythonanywhere.com/api/submitGame", {
+      'method': 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${btoa(user.username+":"+user.password)}`
+      },
+      body: JSON.stringify({
+        'game_id': id,
+        'is_won': won,
+      })
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      // console.log(resp);
+      if (resp.error) alert("Oops. Something went wrong.");
+      else navigate("/homepage");
+    });
+  }
+
   useEffect(() => {
     if (hangman === 10) {
       setGameover(true);
       setTimeout(() => {
         alert("YOU LOSE!");
+        submitGame(false);
       }, 300);
     }
-    // send back lose
+    // eslint-disable-next-line
   }, [hangman]);
 
   useEffect(() => {
@@ -101,13 +127,11 @@ export const Game = () => {
       setGameover(true);
       setTimeout(() => {
         alert("YOU WIN!");
+        submitGame(true);
       }, 300);
     }
-    // send back win
     // eslint-disable-next-line
   }, [correct]);
-
-  useEffect(() => {}, [user]);
 
   useEffect(() => {
     const getDict = (wd) => {
@@ -119,46 +143,71 @@ export const Game = () => {
       }
       return dict;
     };
-    // fetch API to populate everything
-    //dummy word: caterpillar
-    let word = "caterpillar";
-    setWordList(word.split(""));
-    setWordDict(getDict(word));
-    setWordBool(new Array(word.length).fill(false));
+    fetch("https://abhijithibukun.pythonanywhere.com/api/gameDetails", {
+      'method': 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${btoa(user.username+":"+user.password)}`
+      },
+      body: JSON.stringify({
+        'game_id': id,
+      })
+    })
+    .then(resp => resp.json())
+    .then(resp => {
+      console.log(resp);
+      if (resp.response) {
+        let word = resp.response.word.toUpperCase();
+        setWordList(word.split(""));
+        setWordDict(getDict(word));
+        setWordBool(new Array(word.length).fill(false));
+      } else {
+        alert("Oops. URL Expired!")
+      }
+    })
+    // eslint-disable-next-line
   }, []);
 
   return (
-    <div className='hangman'>
-      {/* {user ? (game) : (<Login gid={}/>)} */}
-      <img src={hangmanStates[hangman]} height={"25%"} width={"25%"} alt=""/>
-      <Grid className='word' container justifyContent="center">
-        {wordList.map((a,i) => (
-          <Paper sx={{height: 100, width: 60}}
-                 key={i}
-          >
-            {wordBool[i] && <h1>{a}</h1>}
-          </Paper>
-        ))}
-      </Grid>
-
-      <Grid className="alphabet" container justifyContent="center">
-        <Grid item xs={10}>
-          <Grid container justifyContent="center" spacing={2}>
-            {alpha.map((a, i) => (
-              <Grid key={i} item xs={1}>
-                <Button
-                  sx={{ height: 60, width: 60 }}
-                  variant="contained"
-                  disabled={alphabet[i]}
-                  onClick={() => handleAlphabetClick(a, i)}
-                >
-                  <h1>{a}</h1>
-                </Button>
-              </Grid>
+    <div>
+      {!user ? (
+        <div>
+          <p>It seems like you are not logged in. Please log in first to access the game!</p>
+          <Login gameid={id}/>
+        </div>
+      ) : (
+        <div className='hangman'>
+          <img src={hangmanStates[hangman]} height={"25%"} width={"25%"} alt=""/>
+          <Grid className='word' container justifyContent="center">
+            {wordList.map((a,i) => (
+              <Paper sx={{height: 100, width: 60}}
+                    key={i}
+              >
+                {wordBool[i] && <h1>{a}</h1>}
+              </Paper>
             ))}
           </Grid>
-        </Grid>
-      </Grid>
+
+          <Grid className="alphabet" container justifyContent="center">
+            <Grid item xs={10}>
+              <Grid container justifyContent="center" spacing={2}>
+                {alpha.map((a, i) => (
+                  <Grid key={i} item xs={1}>
+                    <Button
+                      sx={{ height: 60, width: 60 }}
+                      variant="contained"
+                      disabled={alphabet[i]}
+                      onClick={() => handleAlphabetClick(a, i)}
+                    >
+                      <h1>{a}</h1>
+                    </Button>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+        </div>
+      )}
     </div>
   );
 };

@@ -10,7 +10,7 @@ export const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    navigate("/login");
+    navigate("/hangman-react-django");
     console.log({
       email: data.get("username"),
       password: data.get("password"),

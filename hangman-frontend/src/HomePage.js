@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Leaderboard } from "./Leaderboard";
 import { Login } from "./Login";
 import Button from "@mui/material/Button";
@@ -9,9 +9,12 @@ import Container from "@mui/material/Container";
 
 export const HomePage = () => {
   // eslint-disable-next-line
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState({});
+  const [hasLink, setHasLink] = useState(false);
+  const [link, setLink] = useState("");
 
   const navigate = useNavigate();
+  const { state } = useLocation();
 
   const getNewGame = (word) => {
     fetch("https://abhijithibukun.pythonanywhere.com/api/newGame", {
@@ -28,8 +31,11 @@ export const HomePage = () => {
     .then(resp => {
       console.log(resp);
       if (resp.error) alert("Oops. Something went wrong. Try again!");
-      if (word === "") navigate("/game/" + resp.response.game_id);
-      else console.log("CREATE LINK");
+      if (word === "") navigate("/hangman-react-django/game/" + resp.response.game_id);
+      else {
+        setLink(resp.response.game_id);
+        setHasLink(true);
+      }
     })
   } 
 
@@ -42,8 +48,14 @@ export const HomePage = () => {
     e.preventDefault();
 
     const data = new FormData(e.currentTarget);
-    console.log("create link for ", { word: data.get("word") });
+    getNewGame(data.get("word"));
   };
+
+  useEffect(() => {
+    if (state) setUser(state);
+    else setUser(JSON.parse(localStorage.getItem("user")));
+    // eslint-disable-next-line
+  }, [state])
 
   return (
     <div>
@@ -77,6 +89,7 @@ export const HomePage = () => {
               sx={{ mt: 1, mb: 2, border: "1px solid black", p: 2 }}
             >
               <h3>Play Against a Friend?</h3>
+              {hasLink && <p>Game created at: https://localhost:3000/game/{link}</p>}
               <TextField
                 margin="normal"
                 required

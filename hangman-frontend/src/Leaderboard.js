@@ -15,7 +15,7 @@ export const Leaderboard = () => {
       'method': 'GET',
     })
     .then(resp => resp.json())
-    .then(resp => setInfo(resp.leaderboard));
+    .then(resp => setInfo(resp.response.leaderboard));
   }, [])
 
   return (

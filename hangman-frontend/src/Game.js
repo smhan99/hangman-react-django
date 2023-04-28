@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -28,9 +28,10 @@ export const Game = () => {
   const [gameover, setGameover] = useState(false);
 
   const { id } = useParams();
+  const { state } = useLocation();
   const navigate = useNavigate();
   // eslint-disable-next-line
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState({});
   // if we want, we can have difficulty state as well
   const alpha = [
     "A",
@@ -107,7 +108,7 @@ export const Game = () => {
     .then(resp => {
       // console.log(resp);
       if (resp.error) alert("Oops. Something went wrong.");
-      else navigate("/homepage");
+      else navigate("/hangman-react-django/");
     });
   }
 
@@ -167,6 +168,12 @@ export const Game = () => {
     })
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (state) setUser(state);
+    else setUser(JSON.parse(localStorage.getItem("user")));
+    // eslint-disable-next-line
+  }, [state])
 
   return (
     <div>

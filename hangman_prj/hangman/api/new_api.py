@@ -244,7 +244,7 @@ def get_leaderboard(_):
             }
         )
 
-    return Response({'leaderboard': result})
+    return Response({'response': {'leaderboard': result}})
 
 
 @api_view(['POST'])

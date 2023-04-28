@@ -3,19 +3,40 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export const Signup = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const createUser = async (username, password) => {
+    const url = "https://abhijithibukun.pythonanywhere.com/api/registerUser";
+
+    let headers = new Headers();
+
+    headers.append("Content-Type", "application/json");
+
+    let response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+    }).then((response) => response.json());
+    if (response.response === "User successfully created") {
+      navigate("/hangman-react-django/");
+    } else {
+      alert("ooops, something went wrong");
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    navigate("/hangman-react-django");
-    console.log({
-      email: data.get("username"),
-      password: data.get("password"),
-    });
+    createUser(username, password);
   };
+
   return (
     <Container component="main" maxWidth="xs">
       <h2>Sign Up</h2>
@@ -36,6 +57,7 @@ export const Signup = () => {
             label="Username"
             name="username"
             autoFocus
+            onChange={(e) => setUsername(e.target.value)}
           />
           <TextField
             margin="normal"
@@ -45,6 +67,7 @@ export const Signup = () => {
             label="Password"
             type="password"
             id="password"
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <Button

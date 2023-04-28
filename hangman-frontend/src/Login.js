@@ -3,9 +3,46 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-export const Login = ({gameId}) => {
+export const Login = ({ gameId }) => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const verifyUser = async (username, password) => {
+    const url = "https://abhijithibukun.pythonanywhere.com/api/validateCreds";
+
+    let headers = new Headers();
+
+    headers.append("Content-Type", "application/json");
+
+    let response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+    }).then((response) => response.json());
+    if (response.response.validated && !gameId) {
+      navigate("/hangman-react-django/", {
+        state: {
+          username: username,
+          password: password,
+        },
+      });
+    } else if (response.response.validated && gameId) {
+      navigate("/hangman-react-django/game/" + gameId, {
+        state: {
+          username: username,
+          password: password,
+        },
+      });
+    } else {
+      alert("Incorrect username or password");
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,32 +50,20 @@ export const Login = ({gameId}) => {
     let username = data.get("username");
     let password = data.get("password");
     // set username to local storage
-    localStorage.setItem("user", JSON.stringify({
-      username,
-      password,
-    }));
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        username,
+        password,
+      })
+    );
 
-    // make call to user API with this object
-    console.log({
-      username: username,
-      password: password,
-    });
-    if (gameId) {
-      navigate("/hangman-react-django/game/" + gameId, {state: {
-        username: username,
-        password: password,
-      }});
-    } else {
-      navigate("/hangman-react-django", {state: {
-        username: username,
-        password: password,
-      }});
-    }
-    
+    verifyUser(username, password);
   };
+
   return (
     <Container component="main" maxWidth="xs">
-      <h2>Log In</h2>
+      <h2>Want to Play Hangman? Log in below.</h2>
       <Box
         sx={{
           marginTop: 8,
@@ -56,6 +81,7 @@ export const Login = ({gameId}) => {
             label="Username"
             name="username"
             autoFocus
+            onChange={(e) => setUsername(e.target.value)}
           />
           <TextField
             margin="normal"
@@ -65,6 +91,7 @@ export const Login = ({gameId}) => {
             label="Password"
             type="password"
             id="password"
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <Button

@@ -18,26 +18,27 @@ export const HomePage = () => {
 
   const getNewGame = (word) => {
     fetch("https://abhijithibukun.pythonanywhere.com/api/newGame", {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + btoa(user.username+':'+user.password),
+        "Content-Type": "application/json",
+        Authorization: "Basic " + btoa(user.username + ":" + user.password),
       },
       body: JSON.stringify({
-        'word': word,
-      })
+        word: word,
+      }),
     })
-    .then(resp => resp.json())
-    .then(resp => {
-      console.log(resp);
-      if (resp.error) alert("Oops. Something went wrong. Try again!");
-      if (word === "") navigate("/hangman-react-django/game/" + resp.response.game_id);
-      else {
-        setLink(resp.response.game_id);
-        setHasLink(true);
-      }
-    })
-  } 
+      .then((resp) => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        if (resp.error) alert("Oops. Something went wrong. Try again!");
+        if (word === "")
+          navigate("/hangman-react-django/game/" + resp.response.game_id);
+        else {
+          setLink(resp.response.game_id);
+          setHasLink(true);
+        }
+      });
+  };
 
   const handleNewGame = (e) => {
     e.preventDefault();
@@ -55,7 +56,7 @@ export const HomePage = () => {
     if (state) setUser(state);
     else setUser(JSON.parse(localStorage.getItem("user")));
     // eslint-disable-next-line
-  }, [state])
+  }, [state]);
 
   return (
     <div>
@@ -89,7 +90,9 @@ export const HomePage = () => {
               sx={{ mt: 1, mb: 2, border: "1px solid black", p: 2 }}
             >
               <h3>Play Against a Friend?</h3>
-              {hasLink && <p>Game created at: https://localhost:3000/game/{link}</p>}
+              {hasLink && (
+                <p>Game created at: https://localhost:3000/game/{link}</p>
+              )}
               <TextField
                 margin="normal"
                 required

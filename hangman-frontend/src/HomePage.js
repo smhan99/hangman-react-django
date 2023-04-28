@@ -52,6 +52,10 @@ export const HomePage = () => {
     getNewGame(data.get("word"));
   };
 
+  const handleSignOut = (e) => {
+    localStorage.removeItem("user");
+  };
+
   useEffect(() => {
     if (state) setUser(state);
     else setUser(JSON.parse(localStorage.getItem("user")));
@@ -62,7 +66,6 @@ export const HomePage = () => {
     <div>
       {user ? (
         <Container component="main" maxWidth="xs">
-          <h2>Ready to Play Against the Computer?</h2>
           <Box
             sx={{
               marginTop: 2,
@@ -71,27 +74,65 @@ export const HomePage = () => {
               alignItems: "center",
             }}
           >
-            <Box component="form" noValidate sx={{ mt: 1 }}>
+            <Box
+              component="form"
+              noValidate
+              sx={{
+                m: 1,
+                border: "2px solid darkgray",
+                outline: "skyblue solid 10px",
+                px: 2,
+              }}
+            >
+              <h2>Play Hangman Against the Computer</h2>
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 1, mb: 4 }}
+                sx={{ mt: 1, mb: 2 }}
                 onClick={handleNewGame}
               >
                 New Game
               </Button>
             </Box>
-            <Leaderboard />
+
+            <Box
+              component="form"
+              noValidate
+              sx={{
+                m: 1,
+                border: "2px solid darkgray",
+                px: 2,
+              }}
+            >
+              <h3>All Done?</h3>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 1, mb: 2 }}
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </Button>
+            </Box>
             <Box
               component="form"
               onSubmit={handleShareGame}
               noValidate
-              sx={{ mt: 1, mb: 2, border: "1px solid black", p: 2 }}
+              sx={{
+                m: 1,
+                border: "2px solid darkgray",
+                outline: "lightgray solid 10px",
+                px: 2,
+              }}
             >
-              <h3>Play Against a Friend?</h3>
+              <h3>Or Challenge a Friend</h3>
               {hasLink && (
-                <p>Game created at: https://smhan99.github.io/hangman-react-django/game/{link}</p>
+                <p>
+                  Game created at:
+                  https://smhan99.github.io/hangman-react-django/game/{link}
+                </p>
               )}
               <TextField
                 margin="normal"
@@ -107,11 +148,12 @@ export const HomePage = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 1, mb: 2 }}
               >
                 Get Link to Share Game
               </Button>
             </Box>
+            <Leaderboard />
           </Box>
         </Container>
       ) : (

@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 
 import hangman0 from "./static/hangman/0.png";
 import hangman1 from "./static/hangman/1.png";
@@ -92,6 +93,12 @@ export const Game = () => {
     }
   };
 
+  const handleSignOut = (e) => {
+    e.preventDefault();
+    localStorage.removeItem("user");
+    navigate("/hangman-react-django/");
+  };
+
   const getDict = (wd) => {
     let dict = {};
     for (let i = 0; i < wd.length; i++) {
@@ -107,44 +114,44 @@ export const Game = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Basic ${btoa(user.username + ":" + user.password)}`,
+        Authorization: `Basic ${btoa(user.username + ":" + user.password)}`,
       },
       body: JSON.stringify({
         game_id: id,
       }),
     })
-    .then((resp) => resp.json())
-    .then((resp) => {
-      console.log(resp);
-      if (resp.response) {
-        let word = resp.response.word.toUpperCase();
-        setWordList(word.split(""));
-        setWordDict(getDict(word));
-        setWordBool(new Array(word.length).fill(false));
-      } else {
-        alert("Oops. URL Expired!");
-      }
-    });
-  }
+      .then((resp) => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        if (resp.response) {
+          let word = resp.response.word.toUpperCase();
+          setWordList(word.split(""));
+          setWordDict(getDict(word));
+          setWordBool(new Array(word.length).fill(false));
+        } else {
+          alert("Oops. URL Expired!");
+        }
+      });
+  };
 
   const submitGame = (won) => {
     fetch("https://abhijithibukun.pythonanywhere.com/api/submitGame", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Basic ${btoa(user.username + ":" + user.password)}`,
+        Authorization: `Basic ${btoa(user.username + ":" + user.password)}`,
       },
       body: JSON.stringify({
         game_id: id,
         is_won: won,
       }),
     })
-    .then((resp) => resp.json())
-    .then((resp) => {
-      // console.log(resp);
-      if (resp.error) alert("Oops. Something went wrong.");
-      else navigate("/hangman-react-django/");
-    });
+      .then((resp) => resp.json())
+      .then((resp) => {
+        // console.log(resp);
+        if (resp.error) alert("Oops. Something went wrong.");
+        else navigate("/hangman-react-django/");
+      });
   };
 
   useEffect(() => {
@@ -178,7 +185,7 @@ export const Game = () => {
   useEffect(() => {
     if (user) getGame();
     // eslint-disable-next-line
-  }, [user])
+  }, [user]);
 
   return (
     <div>
@@ -224,6 +231,22 @@ export const Game = () => {
               </Grid>
             </Grid>
           </Grid>
+          <Box
+            sx={{
+              m: 4,
+            }}
+          >
+            <p>Done Playing?</p>
+            <Button
+              type="submit"
+              fullwidth
+              variant="outlined"
+              sx={{ p: 1 }}
+              onClick={handleSignOut}
+            >
+              Sign Out
+            </Button>
+          </Box>
         </div>
       )}
     </div>

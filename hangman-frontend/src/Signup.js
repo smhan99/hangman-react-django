@@ -2,15 +2,17 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 
 export const Signup = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const {gameId} = location.state;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const createUser = async (username, password) => {
+  const createUser = async () => {
     const url = "https://abhijithibukun.pythonanywhere.com/api/registerUser";
 
     let headers = new Headers();
@@ -26,15 +28,31 @@ export const Signup = () => {
       }),
     }).then((response) => response.json());
     if (response.response === "User successfully created") {
-      navigate("/hangman-react-django/");
+      // console.log(gameId);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          username: username,
+          password: password,
+        })
+      );
+      navigate(
+        "/hangman-react-django/" + (gameId ? "game/?id=" + gameId : ""),
+        {
+          state: {
+            username: username,
+            password: password,
+          },
+        }
+      );
     } else {
-      alert("ooops, something went wrong");
+      alert(response.error);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createUser(username, password);
+    createUser();
   };
 
   return (

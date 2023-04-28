@@ -25,7 +25,7 @@ export const Login = ({ gameId }) => {
       }),
     }).then((response) => response.json());
 
-    console.log(gameId);
+    // console.log(gameId);
     if (response.response.validated) {
       navigate(
         "/hangman-react-django/" + (gameId ? "game/?id=" + gameId : ""),
@@ -99,7 +99,7 @@ export const Login = ({ gameId }) => {
           </Button>
         </Box>
         <p>Need to Sign Up as a New User?</p>
-        <Link to={"/hangman-react-django/signup"}>Create Account</Link>
+        <Link to={"/hangman-react-django/signup"} state={{ gameId: gameId }}>Create Account</Link>
       </Box>
     </Container>
   );

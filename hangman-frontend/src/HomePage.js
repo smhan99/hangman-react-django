@@ -12,6 +12,7 @@ export const HomePage = () => {
   const [user, setUser] = useState({});
   const [hasLink, setHasLink] = useState(false);
   const [link, setLink] = useState("");
+  const [score, setScore] = useState(0);
 
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -29,7 +30,7 @@ export const HomePage = () => {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         if (resp.error) alert("Oops. Something went wrong. Try again!");
         if (word === "")
           navigate("/hangman-react-django/game/?id=" + resp.response.game_id);
@@ -49,7 +50,9 @@ export const HomePage = () => {
     e.preventDefault();
 
     const data = new FormData(e.currentTarget);
-    getNewGame(data.get("word"));
+    let wd = data.get('word');
+    if (/^[a-zA-Z]+$/.test(wd)) getNewGame(data.get("word"));
+    else alert("Only english letters allowed!");
   };
 
   const handleSignOut = (e) => {
@@ -61,6 +64,22 @@ export const HomePage = () => {
     else setUser(JSON.parse(localStorage.getItem("user")));
     // eslint-disable-next-line
   }, [state]);
+
+  useEffect(() => {
+    if (user !== null && JSON.stringify(user) !== '{}') {
+      // console.log(user);
+      fetch("https://abhijithibukun.pythonanywhere.com/api/getUserScore", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Basic " + btoa(user.username + ":" + user.password),
+        },
+      })
+      .then(resp => resp.json())
+      .then(resp => setScore(resp.response.win_count))
+      .catch(error => console.log(error));
+    }
+  }, [user])
 
   return (
     <div>
@@ -84,6 +103,7 @@ export const HomePage = () => {
                 px: 2,
               }}
             >
+              <h1>Hi, {user.username}. Your current score is {score}</h1><br/>
               <h2>Play Hangman Against the Computer</h2>
               <Button
                 type="submit"
@@ -108,6 +128,7 @@ export const HomePage = () => {
               <h3>All Done?</h3>
               <Button
                 type="submit"
+                color="error"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 1, mb: 2 }}

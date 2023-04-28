@@ -23,6 +23,7 @@ export const Game = () => {
   const [wordDict, setWordDict] = useState({}); // {letter: [position]}
   const [wordList, setWordList] = useState([]); // [letter] of word
   const [wordBool, setWordBool] = useState([]); // [bool] open/close
+  const [wordItself, setWordItself] = useState("");
   const [alphabet, setAlphabet] = useState(new Array(26).fill(false)); //alphabet used/unused
   const [hangman, setHangman] = useState(0); // hangman state
   const [correct, setCorrect] = useState(0);
@@ -124,14 +125,30 @@ export const Game = () => {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         if (resp.response) {
+          if (resp.response.is_over) {
+            alert("Oops. The link is expired.")
+            navigate("/hangman-react-django/", {
+              state: {
+                username: user.username,
+                password: user.password,
+              },
+            });
+          }
           let word = resp.response.word.toUpperCase();
+          setWordItself(word);
           setWordList(word.split(""));
           setWordDict(getDict(word));
           setWordBool(new Array(word.length).fill(false));
         } else {
-          alert("Oops. URL Expired!");
+          alert(resp.error);
+          navigate("/hangman-react-django/", {
+            state: {
+              username: user.username,
+              password: user.password,
+            },
+          });
         }
       });
   };
@@ -151,8 +168,14 @@ export const Game = () => {
       .then((resp) => resp.json())
       .then((resp) => {
         // console.log(resp);
-        if (resp.error) alert("Oops. Something went wrong.");
-        else navigate("/hangman-react-django/");
+        if (resp.error)
+          alert(resp.error);
+        navigate("/hangman-react-django/", {
+          state: {
+            username: user.username,
+            password: user.password,
+          },
+        });
       });
   };
 
@@ -160,7 +183,7 @@ export const Game = () => {
     if (hangman === 10) {
       setGameover(true);
       setTimeout(() => {
-        alert("YOU LOSE!");
+        alert("YOU LOSE! The word was: " + wordItself);
         submitGame(false);
       }, 300);
     }

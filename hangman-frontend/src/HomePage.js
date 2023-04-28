@@ -127,7 +127,7 @@ export const HomePage = () => {
                 px: 2,
               }}
             >
-              <h3>Or Challenge a Friend</h3>
+              <h3>Challenge a Friend</h3>
               {hasLink && (
                 <div>
                   <p>

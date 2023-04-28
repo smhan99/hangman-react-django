@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/hangman-react-django/static/css/main.a30dd66e.css",
-    "main.js": "/hangman-react-django/static/js/main.ce762216.js",
+    "main.js": "/hangman-react-django/static/js/main.d3e9f874.js",
     "index.html": "/hangman-react-django/index.html",
     "main.a30dd66e.css.map": "/hangman-react-django/static/css/main.a30dd66e.css.map",
-    "main.ce762216.js.map": "/hangman-react-django/static/js/main.ce762216.js.map"
+    "main.d3e9f874.js.map": "/hangman-react-django/static/js/main.d3e9f874.js.map"
   },
   "entrypoints": [
     "static/css/main.a30dd66e.css",
-    "static/js/main.ce762216.js"
+    "static/js/main.d3e9f874.js"
   ]
 }

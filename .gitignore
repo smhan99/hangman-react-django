@@ -1,0 +1,11 @@
+.DS_Store
+virt/
+*.pyc
+*.log
+*.pot
+__pycache__
+.idea/workspace.xml
+hangman_prj/db.sqlite3
+.idea/hangman-react-django.iml
+hangman_prj/**/migrations/
+.idea

@@ -27,12 +27,15 @@ export const Login = ({ gameId }) => {
 
     console.log(gameId);
     if (response.response.validated) {
-      navigate("/hangman-react-django/" + (gameId ? "game/" + gameId : ""), {
-        state: {
-          username: username,
-          password: password,
-        },
-      });
+      navigate(
+        "/hangman-react-django/" + (gameId ? "game/?id=" + gameId : ""),
+        {
+          state: {
+            username: username,
+            password: password,
+          },
+        }
+      );
     } else {
       alert("Incorrect username or password");
     }

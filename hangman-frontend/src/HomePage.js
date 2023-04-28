@@ -32,7 +32,7 @@ export const HomePage = () => {
         console.log(resp);
         if (resp.error) alert("Oops. Something went wrong. Try again!");
         if (word === "")
-          navigate("/hangman-react-django/game/" + resp.response.game_id);
+          navigate("/hangman-react-django/game/?id=" + resp.response.game_id);
         else {
           setLink(resp.response.game_id);
           setHasLink(true);
@@ -131,7 +131,7 @@ export const HomePage = () => {
               {hasLink && (
 <<<<<<< HEAD
                 <div>
-                  <p>Game created at: <Link to={`/hangman-react-django/game/${link}`}>This Link</Link></p>
+                  <p>Game created at: <Link to={`/hangman-react-django/game/?id=${link}`}>This Link</Link></p>
                   <p>Right click and 'Copy Link Address' to share your game!</p>
                 </div>
 =======
